@@ -62,6 +62,15 @@ In addition, you can query your data use SQL for high version Elasticsearch.
 
 ![](./images/sql_query_02.png)
 
+Now it supports SQL syntax checking and SQL syntax highlighting.
+
+![](./images/sql_query_03.png)
+
+You can customize your highlight color.
+
+![](./images/sql_query_04.png)
+
+
 ### Favorite API
 
 As you can see, I only implemented a few simple menu items,  it's not enough. So you can define your own favorite api, it will display as a menu item.
