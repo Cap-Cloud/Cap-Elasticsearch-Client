@@ -38,6 +38,26 @@ Then you can manage your cluster.
 
 ![](./images/add_cluster_03.png)
 
+### Basic Menu
+
+There are some basic menu items.
+
+* Cluster API
+
+![](./images/basic_menu_cluster.png)
+
+* Nodes API
+
+![](./images/basic_menu_nodes.png)
+
+* Indices API
+
+![](./images/basic_menu_indices.png)
+
+* Index API
+
+![](./images/basic_menu_index.png)
+
 ### REST API Query
 
 You can operate your data use rest api for all versions of Elasticsearch.
@@ -58,18 +78,71 @@ You can operate your data use rest api for all versions of Elasticsearch.
 
 In addition, you can query your data use SQL for high version Elasticsearch.
 
+If you have installed the [elasticsearch-sql](https://github.com/NLPchina/elasticsearch-sql) plugin, you can execute sql query like this:
+
 ![](./images/sql_query_01.png)
 
 ![](./images/sql_query_02.png)
 
-Now it supports SQL syntax checking and SQL syntax highlighting.
+It supports explain sql query or execute sql query that supported by [elasticsearch-sql](https://github.com/NLPchina/elasticsearch-sql) plugin.
 
 ![](./images/sql_query_03.png)
 
-You can customize your highlight color.
+But, if you have installed the [opendistro-for-elasticsearch](https://github.com/opendistro-for-elasticsearch/sql) plugin, it will support later.
+
+If you use x-pack-sql for sql query, you can execute sql query like this:
 
 ![](./images/sql_query_04.png)
 
+![](./images/sql_query_05.png)
+
+All of them supports SQL syntax checking, SQL syntax highlighting and autocomplete.
+
+![](./images/sql_query_06.png)
+
+You can customize your highlight color.
+
+![](./images/sql_query_07.png)
+
+### Simulate Kibana Query
+
+#### DevTools
+
+##### Console
+
+If you like to use kibana dev tools console, you can use it like this:
+
+![](./images/dev_tools_console_01.png)
+
+Enter your request and execute it, you will get the response.
+
+![](./images/dev_tools_console_02.png)
+
+You can enter multiple request, and select which one to execute.
+
+![](./images/dev_tools_console_03.png)
+
+And it support autocomplete.
+
+* Request method autocomplete.
+
+![](./images/dev_tools_console_04.png)
+
+* Request path autocomplete.
+
+![](./images/dev_tools_console_05.png)
+
+![](./images/dev_tools_console_06.png)
+
+* Index autocomplete
+
+![](./images/dev_tools_console_07.png)
+
+![](./images/dev_tools_console_08.png)
+
+You can customize your highlight color.
+
+![](./images/dev_tools_console_09.png)
 
 ### Favorite API
 
