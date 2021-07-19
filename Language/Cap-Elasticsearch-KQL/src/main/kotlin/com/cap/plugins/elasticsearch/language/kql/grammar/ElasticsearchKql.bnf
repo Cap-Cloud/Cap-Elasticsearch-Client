@@ -1,0 +1,61 @@
+{
+  parserUtilClass="com.cap.plugins.elasticsearch.language.kql.grammar.ElasticsearchKqlModuleParserUtil"
+  elementTypeClass = "com.cap.plugins.elasticsearch.language.kql.grammar.ElasticsearchKqlElementType"
+
+  implements="com.cap.plugins.elasticsearch.language.kql.grammar.psi.ElasticsearchKqlCompositeElement"
+  extends="com.cap.plugins.elasticsearch.language.kql.grammar.psi.impl.ElasticsearchKqlCompositeElementImpl"
+
+  psiClassPrefix = "ElasticsearchKql"
+  psiImplClassSuffix = "Impl"
+  psiPackage="com.cap.plugins.elasticsearch.language.kql.grammar.psi"
+  psiImplPackage = "com.cap.plugins.elasticsearch.language.kql.grammar.psi.impl"
+
+  tokens = [
+    space='regexp:\s+'
+    string = "regexp:\"[^\"]*\"|'[^']*'"
+    number = "regexp:(\+|\-)?\p{Digit}*"
+    id = "regexp:\p{Alpha}\w*"
+    comment='regexp:[#.|\/\/.]*'
+
+    comma = ","
+    colon = ":"
+    brace1 = "{"
+    brace2 = "}"
+    brack1 = "["
+    brack2 = "]"
+  ]
+  // extends("json_array|json_object|json")=obj_value
+}
+
+request_file ::= (request_group) *
+
+request_group ::= request_block [request_separator]
+
+request_block ::= request_method request_url [request_body]
+
+request_method ::= GET | POST | PUT | HEAD | DELETE
+
+request_url ::= URL_ROOT | ([URL_PREFIX] (URL_PATH(URL_OPTION)*)+ [(URL_PARAM1 [URL_PARAM_VALUE(URL_OPTION)*]) (URL_PARAM2 [URL_PARAM_VALUE(URL_OPTION)*])*]) | (URL_PREFIX [URL_ROOT])
+
+request_body ::= json_object+
+
+request_separator ::= separator
+
+json_object ::= '{' [!'}' prop (!'}' ',' prop) *] '}' {pin(".*")=1 extends=json}
+prop ::= obj_name ':' obj_value {pin=1 recoverWhile=obj_recover_real}
+
+obj_name ::= string {name="obj_name" hooks=[rightBinder="GREEDY_RIGHT_BINDER"]}
+obj_value ::= string | number | null | true | false | json
+
+json ::= json_array | json_object { hooks=[wsBinders="null, null"] }
+
+json_array ::= '[' [!']' item (!']' ',' item) *] ']' {pin(".*")=1 extends=json}
+item ::= obj_value | json {recoverWhile=obj_recover_real}
+
+braces ::= brace1 | brace2
+brackets ::= brack1 | brack2
+
+start_script_brace ::= brace1
+end_script_brace ::= brace2
+
+obj_recover ::= !(',' | ']' | '}' | '[' | '{')

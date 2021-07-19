@@ -1,0 +1,11 @@
+rootProject.name = 'Cap-Intellij-Plugins'
+
+include "Libriary:Cap-Annotations"
+include "Libriary:Cap-Commons"
+
+include "Language:Cap-GrammarKit-Composer"
+include "Language:Cap-Elasticsearch-KQL"
+include "Language:Cap-Elasticsearch-Rest"
+include "Language:Cap-Elasticsearch-SQL"
+
+include "Plugins:Cap-Elasticsearch"

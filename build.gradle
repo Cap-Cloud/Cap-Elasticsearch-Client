@@ -1,0 +1,105 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.4.20'
+        ideaVersion = '2021.1.1'
+        intellijPath = 'D:/Repositories/gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.1/cbeeb1f1aebd4c9ea8fb5ab990c5904a676fc41a/ideaIC-2020.1/lib'
+
+        dep = [
+                intellijCore: fileTree(dir: "E:/Git/Intellij/ideaIC-" + ideaVersion + "/lib", include: [
+                        'asm-all-7.0.1.jar',
+                        'automaton-1.12-1.jar',
+                        'extensions.jar',
+                        'guava-28.2-jre.jar',
+                        'idea.jar',
+                        'java-api.jar',
+                        'jdom.jar',
+                        'openapi.jar',
+                        'platform-api.jar',
+                        'platform-concurrency.jar',
+                        'platform-impl.jar',
+                        'platform-util-ui.jar',
+                        'trove4j.jar',
+                        'util.jar'
+                ]),
+                intellijDown: fileTree(dir: "E:/Git/Intellij/ideaIC-" + ideaVersion + "/lib", include: ['*.jar']),
+                intellijLocal : fileTree(dir: intellijPath, include: ['*.jar'])
+        ]
+    }
+
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.29.0"
+        classpath "de.undercouch:gradle-download-task:3.1.2"
+        classpath "com.vanniktech:gradle-maven-publish-plugin:0.14.2"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+}
+
+apply plugin: "com.diffplug.gradle.spotless"
+
+spotless {
+    kotlin {
+        target "**/*.kt"
+        targetExclude "**/gen/**/*.*"
+        ktlint('0.36.0').userData(["indent_size": "2"])
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+apply from: 'downloadDependencies.gradle'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+
+    group 'com.cap.plugin'
+    version VERSION_NAME
+
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
+
+        implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2"
+        implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.2"
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+}

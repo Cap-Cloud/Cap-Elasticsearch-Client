@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13" height="13" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>kibana-13</title>
+    <desc>Created with Sketch.</desc>
+    <g id="kibana-13" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M2,9 L2,21.592 L10.95,11.286 C8.289,9.835 5.244,9 2,9" id="Fill-1" fill="#353535"></path>
+        <path d="M2,0 L2,9 C5.244,9 8.289,9.835 10.95,11.285 L20.75,0 L2,0 Z" id="Fill-3" fill="#FF3A99"></path>
+        <path d="M13.478,12.9492 L4.265,23.5582 L3.882,24.0002 L20.374,24.0002 C19.466,19.5272 16.953,15.6482 13.478,12.9492" id="Fill-5" fill="#00C2B3"></path>
+    </g>
+</svg>

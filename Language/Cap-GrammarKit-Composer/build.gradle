@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath "com.github.hurricup:gradle-grammar-kit-plugin:2020.1.4"
+    }
+}
+
+apply plugin: 'org.jetbrains.grammarkit'
+apply plugin: 'java-gradle-plugin'
+
+gradlePlugin {
+    plugins {
+        grammarKitComposer {
+            id = 'com.cap.language.grammar.kit.composer'
+            implementationClass = 'com.cap.language.grammar.kit.composer.GrammarKitComposerPlugin'
+        }
+    }
+}
+
+dependencies {
+    implementation 'it.unimi.dsi:fastutil:8.4.4'
+    implementation "com.squareup:kotlinpoet:1.5.0"
+    implementation "com.github.hurricup:gradle-grammar-kit-plugin:2020.1.4"
+    implementation gradleApi()
+}

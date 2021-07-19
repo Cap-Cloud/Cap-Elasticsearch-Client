@@ -1,0 +1,201 @@
+<idea-plugin>
+    <id>com.cap.plugin.elasticsearch.client</id>
+    <name>Cap-Elasticsearch-Client</name>
+    <version>1.0.0</version>
+    <vendor email="cap_cloud@outlook.com" url="https://github.com/Cap-Cloud/Cap-Elasticsearch-Client">Cap_Cloud</vendor>
+
+    <description><![CDATA[
+    <div xmlns="http://www.w3.org/1999/html">
+        <p>
+            This Elasticsearch client allows accessing to Elasticsearch cluster, browse and edit your data, execute REST API requests, execute SQL query.<br>
+             <a href="https://github.com/Cap-Cloud/Cap-Elasticsearch-Client">Documentation</a> |
+             <a href="https://github.com/Cap-Cloud/Cap-Elasticsearch-Client">Github</a> |
+             <a href="https://github.com/Cap-Cloud/Cap-Elasticsearch-Client/issues">Issues Tracker</a><br>
+        </p>
+        <p>
+            <h3>Features:</h3>
+            <ul>
+                <li>Support multiple clusters.</li>
+                <li>Support basic operate, such as Cluster APIs, Node APIs, Index APIs.</li>
+                <li>Support REST API, for all versions Elasticsearch. Show data in Text, Json, Json Tree Table, Table view.</li>
+                <li>Support Kibana DevTools console.</li>
+                <li>Support open REST API documentation from DevTools console.</li>
+                <li>Support Elasticsearch SQL query, support SQL syntax checking and SQL syntax highlighting.</li>
+                <li>Support set your favorite API, it will display as a menu item.</li>
+                <li>Support custom internationalization language.</li>
+                <li>Other features are on the way...</li>
+            </ul>
+        </p>
+        <p>
+            Some code implementations refer to some excellent projects.<br>
+            For example:<br>
+            <a href="https://plugins.jetbrains.com/plugin/14512-elasticsearch">Elasticsearch Plugin</a><br>
+            <a href="https://plugins.jetbrains.com/plugin/7141-mongo-plugin">Mongo Plugin</a><br>
+            Thanks to these projects and their authors!
+        </p>
+    </div>
+    ]]></description>
+
+    <idea-version since-build="201" />
+<!--    <idea-version since-build="201" until-build="203.*"/>-->
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <projectService
+                serviceImplementation="com.cap.plugins.elasticsearch.ui.explorer.ElasticsearchBrowserToolWindowExplorer"/>
+        <projectService
+                serviceImplementation="com.cap.plugins.elasticsearch.ui.explorer.ElasticsearchClusterToolWindowExplorer"/>
+        <toolWindow id="Cap Elasticsearch Browser" anchor="bottom" icon="/icons/cap/elasticsearch/elasticsearch-13.svg"
+                    factoryClass="com.cap.plugins.elasticsearch.ui.explorer.ElasticsearchBrowserToolWindowFactory"/>
+        <toolWindow id="Cap Elasticsearch Cluster" anchor="right" icon="/icons/cap/elasticsearch/elasticsearch-13.svg"
+                    factoryClass="com.cap.plugins.elasticsearch.ui.explorer.ElasticsearchClusterToolWindowFactory"/>
+        <applicationConfigurable dynamic="true"
+                                 instance="com.cap.plugins.elasticsearch.ui.config.ElasticsearchMainConfigurable"/>
+
+        <!-- Add your extensions here -->
+        <lang.parserDefinition language="ElasticsearchRest"
+                               implementationClass="com.cap.plugins.elasticsearch.language.rest.lexer.ElasticsearchRestParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="ElasticsearchRest"
+                                       implementationClass="com.cap.plugins.elasticsearch.language.rest.highlighter.ElasticsearchRestSyntaxHighlighterFactory"/>
+        <virtualFileSystem key="elasticsearch.rest"
+                           implementationClass="com.cap.plugins.elasticsearch.ui.editor.rest.ElasticsearchRestFileSystem"/>
+        <fileEditorProvider
+                implementation="com.cap.plugins.elasticsearch.ui.editor.rest.ElasticsearchRestFileEditorProvider"/>
+
+        <!-- Add your extensions here -->
+        <fileType name="Elasticsearch KQL" language="ElasticsearchKql" extensions="eskql"
+                  fieldName="INSTANCE"
+                  implementationClass="com.cap.plugins.elasticsearch.language.kql.ElasticsearchKqlFileType"/>
+        <lang.parserDefinition language="ElasticsearchKql"
+                               implementationClass="com.cap.plugins.elasticsearch.language.kql.lexer.ElasticsearchKqlParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="ElasticsearchKql"
+                                       implementationClass="com.cap.plugins.elasticsearch.language.kql.highlighter.ElasticsearchKqlSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="com.cap.plugins.elasticsearch.language.kql.highlighter.ElasticsearchKqlColorSettingsPage"/>
+        <lang.commenter language="ElasticsearchKql"
+                        implementationClass="com.cap.plugins.elasticsearch.language.kql.commenter.ElasticsearchKqlCommenter"/>
+        <braceMatcher filetype="Elasticsearch KQL"
+                      implementationClass="com.cap.plugins.elasticsearch.language.kql.structure.ElasticsearchKqlPairedBraceMatcherAdapter"/>
+        <fileIndentOptionsProvider
+                implementation="com.cap.plugins.elasticsearch.language.kql.formatter.ElasticsearchKqlFileIndentOptionsProvider"/>
+        <multiHostInjector
+                implementation="com.cap.plugins.elasticsearch.language.kql.formatter.injection.ElasticsearchKqlBodyInjector"/>
+        <lang.formatter language="ElasticsearchKql"
+                        implementationClass="com.cap.plugins.elasticsearch.language.kql.formatter.ElasticsearchKqlFormattingModelBuilder"/>
+        <runLineMarkerContributor language="ElasticsearchKql"
+                                  implementationClass="com.cap.plugins.elasticsearch.language.kql.lineMarker.ElasticsearchKqlRunLineMarkerContributor"/>
+        <completion.contributor language="ElasticsearchKql"
+                                implementationClass="com.cap.plugins.elasticsearch.language.kql.completion.ElasticsearchKqlCompletionContributor"/>
+        <virtualFileSystem key="eskql"
+                           implementationClass="com.cap.plugins.elasticsearch.ui.editor.kql.ElasticsearchKqlFileSystem"/>
+        <fileEditorProvider
+                implementation="com.cap.plugins.elasticsearch.ui.editor.kql.devtools.console.ElasticsearchKqlConsoleFileEditorProvider"/>
+
+        <!-- Add your extensions here -->
+        <fileType name="Elasticsearch SQL" language="ElasticsearchSql" extensions="essql"
+                  fieldName="INSTANCE"
+                  implementationClass="com.cap.plugins.elasticsearch.language.sql.ElasticsearchSqlFileType"/>
+        <lang.parserDefinition language="ElasticsearchSql"
+                               implementationClass="com.cap.plugins.elasticsearch.language.sql.lexer.ElasticsearchSqlParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="ElasticsearchSql"
+                                       implementationClass="com.cap.plugins.elasticsearch.language.sql.highlighter.ElasticsearchSqlSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="com.cap.plugins.elasticsearch.language.sql.highlighter.ElasticsearchSqlColorSettingsPage"/>
+        <lang.commenter language="ElasticsearchSql"
+                        implementationClass="com.cap.plugins.elasticsearch.language.sql.commenter.ElasticsearchSqlCommenter"/>
+        <completion.contributor language="ElasticsearchSql"
+                                implementationClass="com.cap.plugins.elasticsearch.language.sql.completion.ElasticsearchSqlCompletionContributor"/>
+        <virtualFileSystem key="essql"
+                           implementationClass="com.cap.plugins.elasticsearch.ui.editor.sql.ElasticsearchSqlFileSystem"/>
+        <fileEditorProvider
+                implementation="com.cap.plugins.elasticsearch.ui.editor.sql.ElasticsearchSqlFileEditorProvider"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <group id="CapElasticsearchClientMenu" text="Cap Elasticsearch Client" popup="true"
+               description="Cap Elasticsearch Client Menus">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+
+        <group id="CapElasticsearchClientLanguageMenu" class="com.cap.plugins.elasticsearch.action.LanguageActionGroup"
+               text="Choose Language" popup="true" description="Cap Elasticsearch Client Language">
+            <add-to-group group-id="CapElasticsearchClientMenu" anchor="first"/>
+        </group>
+    </actions>
+
+    <change-notes><![CDATA[
+    <div xmlns="http://www.w3.org/1999/html">
+        <p>
+            <h3>0.4.0</h3>
+            <ul>
+                <li>Support physical file and scratches file, you can save your request history.</li>
+                <li>Support edit cluster.</li>
+                <li>Support Open Distro for Elasticsearch sql.</li>
+                <li>Remove Favorite API, because of some bugs.</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.3.2</h3>
+            <ul>
+                <li>Support request body format.</li>
+                <li>Support bulk api.</li>
+                <li>Trust https.</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.3.1</h3>
+            <ul>
+                <li>Add open REST API documentation from DevTools console.</li>
+                <li>Remove use of color for index health, add use of ColorIcon.</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.3.0</h3>
+            <ul>
+                <li>Add basic operate menu item.</li>
+                <li>Add Kibana DevTools console.</li>
+                <li>SQL query support elasticsearch-sql and x-pack-sql.</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.2.0</h3>
+            <ul>
+                <li>Add SQL syntax checking and SQL syntax highlighting.</li>
+                <li>Support customize highlight color.</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.1.1</h3>
+            <ul>
+                <li>Add table row header, remove number column</li>
+                <li>Add table column header tooltip text</li>
+                <li>Solve the garbled Chinese characters in the table column header</li>
+                <li>The color of the cluster nodes represents the health status of the cluster</li>
+                <li>Fix some bugs</li>
+            </ul>
+        </p>
+        <p>
+            <h3>0.1.0</h3>
+            <ul>
+                <li>Support multiple clusters</li>
+                <li>Support REST API</li>
+                <li>Support SQL Query</li>
+                <li>Support set your favorite API</li>
+                <li>Support customize internationalization language</li>
+            </ul>
+        </p>
+    </div>
+    ]]></change-notes>
+
+</idea-plugin>

@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath project(':Language:Cap-GrammarKit-Composer')
+    }
+}
+
+dependencies {
+    compileOnly project(':Language:Cap-GrammarKit-Composer')
+    implementation project(':Libriary:Cap-Annotations')
+}
+
+//apply plugin: 'org.jetbrains.grammarkit'
+//apply plugin: 'com.cap.language.grammar.kit.composer'
+//
+//import org.jetbrains.grammarkit.tasks.GenerateLexer
+//
+//task generateElasticsearchSqlFlexLexer(type: GenerateLexer) {
+//    source 'src/main/kotlin/com/cap/plugins/elasticsearch/language/sql/lexer/ElasticsearchSql.flex'
+//    targetDir 'gen/com/cap/plugins/elasticsearch/language/sql/lexer/'
+//    targetClass 'ElasticsearchSqlFlexLexer'
+//    group = "grammar"
+//    purgeOldFiles = true
+//}
+//
+//compileKotlin.dependsOn generateElasticsearchSqlFlexLexer
+
+sourceSets {
+    main.java.srcDir "gen"
+}

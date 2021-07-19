@@ -1,0 +1,151 @@
+{
+  parserUtilClass="com.cap.plugins.elasticsearch.language.sql.grammar.ElasticsearchSqlModuleParserUtil"
+  elementTypeClass = "com.cap.plugins.elasticsearch.language.sql.grammar.ElasticsearchSqlElementType"
+
+  psiClassPrefix = "ElasticsearchSql"
+  psiImplClassSuffix = "Impl"
+  psiPackage="com.cap.plugins.elasticsearch.language.sql.grammar.psi"
+  psiImplPackage = "com.cap.plugins.elasticsearch.language.sql.grammar.psi.impl"
+
+  tokens=[
+    SEMI=';'
+    EQ='='
+    EQ2='=='
+    LP='('
+    RP=')'
+    DOT='.'
+    COMMA=','
+    PLUS='+'
+    MINUS='-'
+    BITWISE_AND='&'
+    BITWISE_NOT='~'
+    BITWISE_OR='|'
+    SHIFT_RIGHT='>>'
+    SHIFT_LEFT='<<'
+    LT='<'
+    GT='>'
+    LTE='<='
+    GTE='>='
+    NEQ='!='
+    NEQ2='<>'
+    MULTIPLY='*'
+    DIVIDE='/'
+    MOD='%'
+    CONCAT='||'
+    DO='DO'
+    NOTHING='NOTHING'
+
+    space='regexp:\s+'
+    comment='regexp:--.*'
+    javadoc='regexp:/\*\*([^*]|\*+[^/*])*\*/'
+    digit='regexp:\d+(\.\d*)?'
+    id='regexp:([a-zA-Z_][a-zA-Z_0-9]*)|(`[a-zA-Z_0-9 ]+`)|(\[[a-zA-Z_0-9 ]+\])'
+    string="regexp:('([^'])*'|\"([^\"])*\")"
+  ]
+  extends(".*expr")=expr
+}
+
+sql_commands ::= ( [ EXPLAIN [ QUERY PLAN ] ] ( describe_table | select_command | show_tables | show_columns | show_functions ) ) *
+
+elasticsearch_reserved ::= (ALL|AND|ANY|AS|ASC|BETWEEN|BY|CAST|CATALOG|CONVERT|CURRENT_DATE|CURRENT_TIMESTAMP|CURRENT_TIME|DAY|DAYS|DESC|DESCRIBE|DISTINCT|ESCAPE|EXISTS|EXPLAIN|EXTRACT|FALSE|FIRST|FROM|FULL|GROUP|HAVING|HOUR|HOURS|IN|INNER|INTERVAL|IS|JOIN|LEFT|LIKE|LIMIT|MATCH|MINUTE|MINUTES|MONTH|NATURAL|NOT|NULL|NULLS|ON|OR|ORDER|OUTER|RIGHT|RLIKE|QUERY|SECOND|SECONDS|SELECT|SESSION|TABLE|TABLES|THEN|TO|TOP|TRUE|TYPE|USING|WHEN|WHERE|WITH|YEAR|YEARS|SHOW|COLUMNS|FUNCTIONS|PIVOT)
+
+sql_reserved ::= (ABORT|ACTION|ADD|AFTER|ALTER|ANALYZE|ATTACH|AUTOINCREMENT|BEFORE|BEGIN|CASCADE|CASE|CHECK|COLLATE|COLUMN|COMMIT|CONFLICT|CONSTRAINT|CREATE|CROSS|DATABASE|DEFAULT|DEFERRABLE|DEFERRED|DELETE|DETACH|DO|DROP|E|EACH|ELSE|END|EXCEPT|EXCLUSIVE|FAIL|FOR|FOREIGN|GLOB|IF|IGNORE|IMMEDIATE|INDEX|INDEXED|INITIALLY|INSERT|INSTEAD|INTERSECT|INTO|ISNULL|KEY|NO|NOTHING|NOTNULL|OF|OFFSET|PLAN|PRAGMA|PRIMARY|RAISE|RECURSIVE|REFERENCES|REGEXP|REINDEX|RELEASE|RENAME|REPLACE|RESTRICT|ROLLBACK|ROW|ROWID|SAVEPOINT|SET|TEMP|TEMPORARY|TRANSACTION|TRIGGER|UNION|UNIQUE|UPDATE|VACUUM|VALUES|VIEW|VIRTUAL|WITHOUT)
+
+database_name ::= id | string
+table_name ::= id | string
+table_alias ::= id | string
+column_name ::= id | string
+column_alias ::= id | string
+function_name ::= id | string
+
+bind_parameter ::= '?'
+
+expr ::= ( between_expr
+         | binary_add_expr
+         | binary_and_expr
+         | binary_bitwise_expr
+         | binary_boolean_expr
+         | binary_equality_expr
+         | binary_like_expr
+         | binary_multi_expr
+         | binary_or_expr
+         | binary_pipe_expr
+         | bind_expr
+         | case_expr
+         | column_expr
+         | function_expr
+         | in_expr
+         | is_expr
+         | literal_expr
+         | null_expr
+         | other_expr
+         | paren_expr
+         | unary_expr )
+
+between_expr ::= expr [ NOT ] BETWEEN expr AND <<expr '6'>>
+binary_add_expr ::= expr ( '+' | '-' ) expr
+binary_and_expr ::= expr AND expr
+binary_bitwise_expr ::= expr ( '<<' |  '>>' | '&' | '|' ) expr
+binary_boolean_expr ::= expr (  '<' | '<=' | '>' | '>=' ) expr
+binary_equality_expr ::= expr ( '=' | '==' | '!=' | '<>' ) expr
+binary_like_expr ::= expr [ NOT ] ( LIKE | GLOB | REGEXP | MATCH ) expr [ ESCAPE expr ]
+binary_multi_expr ::= expr ( '*' | '/' | '%' ) expr
+binary_or_expr ::= expr OR expr
+binary_pipe_expr ::= expr '||' expr
+bind_expr ::= bind_parameter
+
+case_expr ::= CASE [ expr ] WHEN expr THEN expr ( WHEN expr THEN expr ) * [ ELSE expr ] END
+column_expr ::= [ database_name '.' table_name '.' | table_name '.' ] column_name
+
+function_expr ::= function_name '(' [ [ DISTINCT ] expr ( ',' expr ) * | '*' ] ')'
+
+in_expr ::= expr [ NOT ] IN ( '(' [ select_command | expr ( ',' expr ) * ] ')' | [ database_name '.' ] table_name | bind_expr )
+is_expr ::= expr IS [ NOT ] expr
+
+literal_expr ::= ( numeric_literal
+                  | string_literal
+                  | blob_literal
+                  | NULL
+                  | CURRENT_TIME
+                  | CURRENT_DATE
+                  | CURRENT_TIMESTAMP )
+numeric_literal ::= ( ( digit [ '.' ( digit ) * ] | '.' digit )
+                      | TRUE
+                      | FALSE
+                    ) [ E [ '+' | '-' ] digit ]
+string_literal ::= string
+blob_literal ::= '0x' digit
+
+null_expr ::= expr ( ISNULL | NOTNULL | IS [ NOT ] NULL )
+
+other_expr ::= extension_expr
+extension_expr ::=
+
+paren_expr ::= '(' expr ')'
+
+unary_expr ::= ('+' | '-' | '~' ) expr
+
+
+describe_table ::= (DESCRIBE|DESC) [ table_name | [LIKE] expr ]
+
+
+select_command ::= SELECT [DISTINCT|ALL|TOP[digit]] result_column ( ',' result_column ) * [ FROM join_clause ] [ WHERE expr ] [ GROUP BY expr ( ',' expr ) * [ HAVING expr ] ] [ ORDER BY ordering_term (',' ordering_term) * ] [ LIMIT [ digit ]] [ PIVOT expr ]
+                | [ VALUES ] values_expression ( ',' values_expression ) *
+
+result_column ::= ( '*' | table_name '.' '*' | expr [ [ AS ] column_alias ] )
+
+join_clause ::= table_or_subquery ( join_operator table_or_subquery join_constraint ) *
+table_or_subquery ::= ( [ database_name '.' ] table_name [ [ AS ] table_alias ]
+                      | '(' ( table_or_subquery ( ',' table_or_subquery ) * | join_clause ) ')'
+                      | '(' select_command ')' [ [ AS ] table_alias ] )
+join_operator ::= ( ',' | [ NATURAL ] [ LEFT [ OUTER ] | INNER | CROSS ] JOIN )
+join_constraint ::= [ ON expr | USING '(' column_name ( ',' column_name ) * ')' ]
+
+ordering_term ::= expr [ ASC | DESC ]
+
+values_expression ::= '(' expr ( ',' expr ) * ')'
+
+
+show_tables ::= SHOW TABLES [LIKE] expr
+show_columns ::= SHOW FUNCTIONS [LIKE] expr
+show_functions ::= SHOW COLUMNS [FROM|IN] expr

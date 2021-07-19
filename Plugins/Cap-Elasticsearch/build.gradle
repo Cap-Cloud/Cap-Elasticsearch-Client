@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(':Libriary:Cap-Commons')
+
+    implementation "org.apache.commons:commons-text:1.9"
+
+    implementation project(':Language:Cap-Elasticsearch-KQL')
+    implementation project(':Language:Cap-Elasticsearch-Rest')
+    implementation project(':Language:Cap-Elasticsearch-SQL')
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    pluginName = 'Cap-Elasticsearch-Client'
+    plugins = []
+}

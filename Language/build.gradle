@@ -1,0 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+//        classpath "com.github.hurricup:gradle-grammar-kit-plugin:2020.1.4"
+    }
+}
+
+allprojects {
+    dependencies {
+        compileOnly dep.intellijDown
+    }
+}

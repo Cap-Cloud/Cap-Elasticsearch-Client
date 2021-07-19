@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':Libriary:Cap-Annotations')
+
+    compileOnly dep.intellijDown
+    compile "org.apache.commons:commons-text:1.9"
+}

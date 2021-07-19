@@ -1,0 +1,103 @@
+import org.jetbrains.intellij.tasks.PrepareSandboxTask
+import org.gradle.jvm.tasks.Jar
+
+buildscript {
+    repositories {
+        maven { url 'http://localhost:53301/repository/intellij-plugin-gradle/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.guardsquare:proguard-gradle:7.0.1'
+    }
+}
+
+plugins {
+    id 'org.jetbrains.intellij' version '0.6.4'
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'org.jetbrains.intellij'
+
+    dependencies {
+    }
+
+    final GROUP_NAME = "cap"
+    final PROGUARD_DIR = "build/proguard"
+
+    final String PREPARE_SANDBOX_TASK_NAME = "prepareSandbox"
+    final String JAR_SEARCHABLE_OPTIONS_TASK_NAME = "jarSearchableOptions"
+
+    def prepareSandboxTask = project.tasks.findByName(PREPARE_SANDBOX_TASK_NAME) as PrepareSandboxTask
+    def jarSearchableOptionsTask = project.tasks.findByName(JAR_SEARCHABLE_OPTIONS_TASK_NAME) as Jar
+
+    tasks.register("copyJars", Copy) {
+        group = GROUP_NAME
+
+        // from { "${prepareSandboxTask.getDestinationDir()}/${prepareSandboxTask.getPluginName()}/lib/Cap-Commons-${version}.jar" }
+        // from { "${prepareSandboxTask.getDestinationDir()}/${prepareSandboxTask.getPluginName()}/lib/${prepareSandboxTask.getPluginName()}-${version}.jar" }
+        from { "${prepareSandboxTask.getDestinationDir()}/${prepareSandboxTask.getPluginName()}/lib" }
+        include '**/Cap-*.jar'
+        into { "${PROGUARD_DIR}/jar" }
+
+        dependsOn(JAR_SEARCHABLE_OPTIONS_TASK_NAME)
+    }
+
+    tasks.register("copyLibs", Copy) {
+        group = GROUP_NAME
+
+        from { "${prepareSandboxTask.getDestinationDir()}/${prepareSandboxTask.getPluginName()}" }
+        exclude '**/Cap-*.jar'
+        into { PROGUARD_DIR }
+
+        dependsOn("copyJars")
+    }
+
+    tasks.register("pluginProguard", proguard.gradle.ProGuardTask) {
+        group = GROUP_NAME
+
+        dependsOn("copyLibs")
+
+        libraryjars "${PROGUARD_DIR}/lib"
+        libraryjars "D:/EasyGreen/Java/jdk1.8.0_x64/jre/lib/rt.jar"
+        libraryjars "E:/Repositories/Nexus/gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib"
+
+        // injars "${PROGUARD_DIR}/Cap-Commons-${version}.jar"
+        // injars "${PROGUARD_DIR}/${prepareSandboxTask.getPluginName()}-${version}.jar"
+        injars "${PROGUARD_DIR}/jar"
+
+        // outjars "${prepareSandboxTask.getDestinationDir()}/${prepareSandboxTask.getPluginName()}/lib"
+
+        configuration "proguard.cfg"
+    }
+
+    tasks.register("pluginZip", Zip) {
+        group = GROUP_NAME
+
+        dependsOn("pluginProguard")
+
+        // from { PROGUARD_DIR }
+        // into { prepareSandboxTask.getPluginName() }
+
+        from { "${PROGUARD_DIR}/lib" }
+        from { "${PROGUARD_DIR}/out" }
+        from { jarSearchableOptionsTask.archiveFile }
+        into { "${prepareSandboxTask.getPluginName()}/lib" }
+
+        archiveBaseName.set(project.provider { prepareSandboxTask.getPluginName() })
+    }
+
+    // See https://github.com/JetBrains/gradle-intellij-plugin/
+    intellij {
+        version = '2021.1'
+        sandboxDirectory = "${getBuildDir().parent}/idea-sandbox-${version}"
+        type = 'IC'
+        updateSinceUntilBuild = false
+    }
+}
